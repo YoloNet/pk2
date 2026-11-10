@@ -29,4 +29,4 @@ trap 'rm -rf "$OUT"' EXIT
   app/src/main/java/com/pokerku/app/engine/BotAi.kt \
   scripts/EngineTest.kt
 
-"$JAVA_HOME/bin/java" -cp "$OUT:$STDLIB" TestEngineKt
+"$JAVA_HOME/bin/java" -cp "$OUT:$STDLIB" EngineTestKt
