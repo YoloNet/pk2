@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -43,6 +45,7 @@ import com.pokerku.app.engine.PlayerAction
 import com.pokerku.app.engine.Street
 import com.pokerku.app.i18n.Strings
 import com.pokerku.app.ui.PokerViewModel
+import com.pokerku.app.ui.components.BotAvatar
 import com.pokerku.app.ui.components.CardRow
 import com.pokerku.app.ui.components.ChipBadge
 import com.pokerku.app.ui.components.PlayerSeat
@@ -64,6 +67,7 @@ fun TableScreen(vm: PokerViewModel) {
     val settings by vm.settings.collectAsState()
     val showRaise by vm.showRaisePanel.collectAsState()
     val showRebuy by vm.showRebuy.collectAsState()
+    val profilePlayerId by vm.profilePlayerId.collectAsState()
     val raiseAmount by vm.raiseAmount.collectAsState()
     val lang = settings.bahasa
     val s = snap
@@ -96,8 +100,16 @@ fun TableScreen(vm: PokerViewModel) {
         } else null
     }
 
+    // Susun atur selamat (edge-to-edge): header di bawah status bar,
+    // butang aksi di atas navigation bar sistem — tiada pertindihan.
+    // Meja guna weight(1f): mengisi ruang antara header dan kawasan bawah.
     Column(
-        modifier = Modifier.fillMaxSize().background(FeltGelap).padding(12.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(FeltGelap)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         // --- Bar atas ---
         Row(
@@ -153,26 +165,29 @@ fun TableScreen(vm: PokerViewModel) {
                     spacing = 5.dp
                 )
             }
-            // vic — atas tengah.
+            // vic — atas tengah (klik buka dialog profil).
             PlayerSeat(
                 p = s.players[1],
                 styleLabel = vm.t("bot.ketat"),
                 t = { key -> vm.t(key) },
-                modifier = Modifier.align(Alignment.TopCenter).padding(top = 10.dp)
+                modifier = Modifier.align(Alignment.TopCenter).padding(top = 20.dp),
+                onClick = { vm.tunjukProfil(1) }
             )
-            // Masta — kiri tengah.
+            // Masta — kiri tengah (klik buka dialog profil).
             PlayerSeat(
                 p = s.players[2],
                 styleLabel = vm.t("bot.longgar"),
                 t = { key -> vm.t(key) },
-                modifier = Modifier.align(Alignment.CenterStart).padding(start = 8.dp)
+                modifier = Modifier.align(Alignment.CenterStart).padding(start = 14.dp),
+                onClick = { vm.tunjukProfil(2) }
             )
-            // Ayam — kanan tengah.
+            // Ayam — kanan tengah (klik buka dialog profil).
             PlayerSeat(
                 p = s.players[3],
                 styleLabel = vm.t("bot.agresif"),
                 t = { key -> vm.t(key) },
-                modifier = Modifier.align(Alignment.CenterEnd).padding(end = 8.dp)
+                modifier = Modifier.align(Alignment.CenterEnd).padding(end = 14.dp),
+                onClick = { vm.tunjukProfil(3) }
             )
 
             // Banner pemenang (tangan tamat).
@@ -184,8 +199,11 @@ fun TableScreen(vm: PokerViewModel) {
         Spacer(modifier = Modifier.height(10.dp))
 
         // --- Kawasan anda ---
+        // Susunan menegak dengan jarak jelas: baris kad → lencana bet/hint →
+        // butang aksi. Tiada pertindihan dengan butang (navigationBarsPadding
+        // di root memastikan bahagian ini sentiasa di atas nav bar sistem).
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -221,10 +239,11 @@ fun TableScreen(vm: PokerViewModel) {
                 }
             }
             if (you.betInRound > 0) {
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(6.dp))
                 ChipBadge(you.betInRound)
             }
             if (myBest != null && s.street != Street.HAND_OVER) {
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "${vm.t("table.kadAnda")}: ${vm.t(myBest.category.key)}",
                     color = Color(0xFFB9C9BC),
@@ -232,7 +251,7 @@ fun TableScreen(vm: PokerViewModel) {
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             when {
                 s.street == Street.HAND_OVER -> {
@@ -302,6 +321,84 @@ fun TableScreen(vm: PokerViewModel) {
             dismissButton = {
                 TextButton(onClick = { vm.tolakRebuy() }) {
                     Text(vm.t("table.rebuyTidak"))
+                }
+            }
+        )
+    }
+
+    // Dialog profil opponent — klik avatar/nama bot di meja.
+    // Hanya paparan: permainan di belakang tidak diganggu.
+    val profilePlayer = profilePlayerId?.let { id -> s.players.getOrNull(id) }
+    if (profilePlayer != null && profilePlayer.isBot) {
+        AlertDialog(
+            onDismissRequest = { vm.tutupProfil() },
+            title = {
+                Text(
+                    text = vm.t("profile.title"),
+                    color = Krim,
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    BotAvatar(name = profilePlayer.name, size = 72.dp)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = profilePlayer.name,
+                        color = Krim,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = vm.labelGayaBot(profilePlayer.id),
+                        color = Color(0xFFB9C9BC),
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = vm.t("profile.biggestPot"),
+                            color = Color(0xFFB9C9BC),
+                            fontSize = 13.sp
+                        )
+                        Text(
+                            text = if (profilePlayer.biggestPotWon > 0) profilePlayer.biggestPotWon.toString()
+                            else vm.t("stats.tiada"),
+                            color = EmasTerang,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = vm.t("profile.highestChips"),
+                            color = Color(0xFFB9C9BC),
+                            fontSize = 13.sp
+                        )
+                        Text(
+                            text = profilePlayer.highestChips.toString(),
+                            color = EmasTerang,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { vm.tutupProfil() }) {
+                    Text(vm.t("common.tutup"), color = EmasTerang, fontWeight = FontWeight.Bold)
                 }
             }
         )

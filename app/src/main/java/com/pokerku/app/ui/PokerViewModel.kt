@@ -43,6 +43,8 @@ class PokerViewModel(application: Application) : AndroidViewModel(application) {
     val showRebuy = MutableStateFlow(false)
     val showResetStats = MutableStateFlow(false)
     val showResetChips = MutableStateFlow(false)
+    /** Id pemain bot yang dialog profilnya sedang dibuka (null = tiada dialog). */
+    val profilePlayerId = MutableStateFlow<Int?>(null)
 
     private var game: PokerGame? = null
     private var botJob: Job? = null
@@ -58,6 +60,23 @@ class PokerViewModel(application: Application) : AndroidViewModel(application) {
     )
 
     fun gayaBot(id: Int): BotStyle = gayaBotMengikutId[id] ?: BotStyle.KETAT
+
+    /** Label personaliti bot dalam bahasa semasa (cth. "Ketat" / "Tight"). */
+    fun labelGayaBot(id: Int): String = when (gayaBot(id)) {
+        BotStyle.KETAT -> t("bot.ketat")
+        BotStyle.LONGGAR -> t("bot.longgar")
+        BotStyle.AGRESIF -> t("bot.agresif")
+    }
+
+    /** Buka dialog profil opponent (bot). */
+    fun tunjukProfil(id: Int) {
+        profilePlayerId.value = id
+    }
+
+    /** Tutup dialog profil opponent. */
+    fun tutupProfil() {
+        profilePlayerId.value = null
+    }
 
     fun t(key: String, vararg params: Pair<String, String>): String =
         Strings.t(key, settings.value.bahasa, *params)

@@ -1,7 +1,7 @@
 package com.pokerku.app.i18n
 
 /**
- * PokerKu — teks dwibahasa (BM lalai + English).
+ * PokerKu — teks dwibahasa (English lalai + BM).
  * Pola sama seperti Strings.kt kuv2: map kunci -> teks, dengan
  * penggantian parameter {nama}.
  */
@@ -17,7 +17,7 @@ object Strings {
         "menu.tetapan" to "Tetapan",
         "menu.cipAnda" to "Cip Anda",
         "menu.tanganTerbaik" to "Tangan Terbaik",
-        "menu.versi" to "Versi 1.0.0 — Offline",
+        "menu.versi" to "Versi 1.0.1 — Offline",
         "menu.lawan" to "Lawan anda: vic (Ketat), Masta (Longgar), Ayam (Agresif)",
 
         "table.tangan" to "Tangan #{n}",
@@ -70,6 +70,10 @@ object Strings {
         "bot.longgar" to "Longgar",
         "bot.agresif" to "Agresif",
 
+        "profile.title" to "Profil Pemain",
+        "profile.biggestPot" to "Pot Terbesar Dimenangi",
+        "profile.highestChips" to "Chip Tertinggi Dipegang",
+
         "street.preflop" to "Pre-Flop",
         "street.flop" to "Flop",
         "street.turn" to "Turn",
@@ -121,7 +125,7 @@ object Strings {
         "settings.resetCip" to "Reset Cip ke 1,000",
         "settings.resetCipDesc" to "Baki cip anda dikembalikan kepada 1,000.",
         "settings.tentang" to "Tentang PokerKu",
-        "settings.tentangBody" to "PokerKu v1.0.0 — Texas Hold'em offline lawan 3 bot AI (vic, Masta, Ayam). Wang mainan sahaja; tiada duit sebenar, tiada akaun, tiada data dihantar ke mana-mana. © 2026 RJ TECH SOLUTIONS",
+        "settings.tentangBody" to "PokerKu v1.0.1 — Texas Hold'em offline lawan 3 bot AI (vic, Masta, Ayam). Wang mainan sahaja; tiada duit sebenar, tiada akaun, tiada data dihantar ke mana-mana. © 2026 RJ TECH SOLUTIONS",
         "settings.botTitle" to "Lawan Anda",
         "settings.botDesc" to "vic (Ketat) • Masta (Longgar) • Ayam (Agresif)",
 
@@ -142,7 +146,7 @@ object Strings {
         "menu.tetapan" to "Settings",
         "menu.cipAnda" to "Your Chips",
         "menu.tanganTerbaik" to "Best Hand",
-        "menu.versi" to "Version 1.0.0 — Offline",
+        "menu.versi" to "Version 1.0.1 — Offline",
         "menu.lawan" to "Your opponents: vic (Tight), Masta (Loose), Ayam (Aggressive)",
 
         "table.tangan" to "Hand #{n}",
@@ -195,6 +199,10 @@ object Strings {
         "bot.longgar" to "Loose",
         "bot.agresif" to "Aggressive",
 
+        "profile.title" to "Player Profile",
+        "profile.biggestPot" to "Biggest Pot Won",
+        "profile.highestChips" to "Highest Chips Held",
+
         "street.preflop" to "Pre-Flop",
         "street.flop" to "Flop",
         "street.turn" to "Turn",
@@ -246,7 +254,7 @@ object Strings {
         "settings.resetCip" to "Reset Chips to 1,000",
         "settings.resetCipDesc" to "Your chip balance returns to 1,000.",
         "settings.tentang" to "About PokerKu",
-        "settings.tentangBody" to "PokerKu v1.0.0 — offline Texas Hold'em against 3 AI bots (vic, Masta, Ayam). Play money only; no real money, no accounts, no data sent anywhere. © 2026 RJ TECH SOLUTIONS",
+        "settings.tentangBody" to "PokerKu v1.0.1 — offline Texas Hold'em against 3 AI bots (vic, Masta, Ayam). Play money only; no real money, no accounts, no data sent anywhere. © 2026 RJ TECH SOLUTIONS",
         "settings.botTitle" to "Your Opponents",
         "settings.botDesc" to "vic (Tight) • Masta (Loose) • Ayam (Aggressive)",
 

@@ -36,7 +36,11 @@ data class PlayerState(
     var folded: Boolean = false,
     var allIn: Boolean = false,
     var isDealer: Boolean = false,
-    var lastAction: String? = null
+    var lastAction: String? = null,
+    /** Statistik SESI (reset bila aplikasi dibuka semula): pot terbesar pernah dimenangi. */
+    var biggestPotWon: Int = 0,
+    /** Statistik SESI: jumlah chip tertinggi pernah dipegang. */
+    var highestChips: Int = 0
 )
 
 /** Satu pot (utama atau side) beserta pemain yang layak memenanginya. */
@@ -62,7 +66,14 @@ class PokerGame(
     private val deckSeed: Long? = null
 ) {
     val players: List<PlayerState> = playerNames.indices.map { i ->
-        PlayerState(id = i, name = playerNames[i], isBot = botFlags[i], stack = startingStack)
+        PlayerState(
+            id = i,
+            name = playerNames[i],
+            isBot = botFlags[i],
+            stack = startingStack,
+            // Statistik sesi: chip tertinggi bermula pada stack permulaan.
+            highestChips = startingStack
+        )
     }
 
     var dealerIndex: Int = 0
@@ -178,6 +189,17 @@ class PokerGame(
         // UTG = pemain selepas BB.
         actionIndex = nextActiveIndex(bbIndex, includeAllIn = false)
         log.add("Tangan #$handNumber — dealer: ${players[dealerIndex].name}")
+
+        // Statistik sesi: rebuy / reset stack bot ke 1,000 juga dikira
+        // (ViewModel reset stack sebelum startHand dipanggil).
+        refreshHighestChips()
+    }
+
+    /** Kemas kini chip tertinggi sesi untuk semua pemain (stack semasa > rekod). */
+    private fun refreshHighestChips() {
+        for (p in players) {
+            if (p.stack > p.highestChips) p.highestChips = p.stack
+        }
     }
 
     private fun postBlind(player: PlayerState, amount: Int) {
@@ -377,6 +399,9 @@ class PokerGame(
         val pot = totalPot()
         lastPot = pot
         winner.stack += pot
+        // Statistik sesi: pot terbesar & chip tertinggi pemenang.
+        if (pot > winner.biggestPotWon) winner.biggestPotWon = pot
+        refreshHighestChips()
         for (p in players) p.betInHand = 0
         foldWinnerId = winner.id
         street = Street.HAND_OVER
@@ -413,7 +438,10 @@ class PokerGame(
         }
         for ((id, won) in winnings) {
             players[id].stack += won
+            // Statistik sesi: pot terbesar yang dimenangi pemain ini.
+            if (won > players[id].biggestPotWon) players[id].biggestPotWon = won
         }
+        refreshHighestChips()
         lastPot = pots.sumOf { it.amount }
         for (p in players) p.betInHand = 0
         lastShowdown = ShowdownOutcome(
@@ -467,7 +495,11 @@ class PokerGame(
         val isDealer: Boolean,
         val lastAction: String?,
         val isTurn: Boolean,
-        val handValue: HandValue?
+        val handValue: HandValue?,
+        /** Statistik sesi: pot terbesar pernah dimenangi pemain ini. */
+        val biggestPotWon: Int,
+        /** Statistik sesi: chip tertinggi pernah dipegang pemain ini. */
+        val highestChips: Int
     )
 
     data class Snapshot(
@@ -508,7 +540,9 @@ class PokerGame(
                     lastAction = p.lastAction,
                     isTurn = p.id == actionIndex &&
                         street != Street.HAND_OVER && street != Street.SHOWDOWN,
-                    handValue = lastShowdown?.handValues?.get(p.id)
+                    handValue = lastShowdown?.handValues?.get(p.id),
+                    biggestPotWon = p.biggestPotWon,
+                    highestChips = p.highestChips
                 )
             },
             showdown = lastShowdown,

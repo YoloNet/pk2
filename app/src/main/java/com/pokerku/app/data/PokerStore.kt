@@ -20,7 +20,7 @@ private val Context.pokerDataStore: DataStore<Preferences> by preferencesDataSto
 
 data class PokerSettings(
     val chips: Int = 1000,
-    val bahasa: String = "ms",
+    val bahasa: String = "en",
     val kelajuan: String = "sederhana", // perlahan | sederhana | laju
     val tanganMain: Int = 0,
     val tanganMenang: Int = 0,
@@ -45,7 +45,7 @@ class PokerStore(private val context: Context) {
     val settings: Flow<PokerSettings> = context.pokerDataStore.data.map { p ->
         PokerSettings(
             chips = p[Keys.CHIPS] ?: 1000,
-            bahasa = p[Keys.BAHASA] ?: "ms",
+            bahasa = p[Keys.BAHASA] ?: "en",
             kelajuan = p[Keys.KELAJUAN] ?: "sederhana",
             tanganMain = p[Keys.TANGAN_MAIN] ?: 0,
             tanganMenang = p[Keys.TANGAN_MENANG] ?: 0,

@@ -5,7 +5,7 @@ Aplikasi Android **native sepenuhnya** (Kotlin + Jetpack Compose + Material 3)
 WebView, bukan aplikasi web.
 
 - **Nama:** PokerKu · **applicationId:** `com.pokerku.app`
-- **Versi:** 1.0.0 (versionCode 1) · **minSdk 24** (Android 7.0) · **targetSdk 36**
+- **Versi:** 1.0.1 (versionCode 1) · **minSdk 24** (Android 7.0) · **targetSdk 36**
 - **Wang mainan (play money) sahaja** — tiada duit sebenar, tiada pembelian,
   tiada akaun, tiada login, tiada iklan, tiada analytics, tiada tracking.
 - **Offline sepenuhnya** — manifest TIADA keizinan langsung (tiada INTERNET pun).
@@ -24,9 +24,25 @@ WebView, bukan aplikasi web.
 - **Meja permainan:** kad dilukis dengan Compose (tiada imej), community card,
   penanda dealer, highlight kad pemenang, nama tangan pemenang, butang pantas
   (½ Pot, Pot, All-In), slider raise, rebuy automatik ke 1,000 bila chip habis.
+  Susun atur selamat edge-to-edge: header di bawah status bar,
+  butang aksi di atas navigation bar sistem (statusBarsPadding /
+  navigationBarsPadding) — tiada pertindihan pada skrin tinggi.
+- **Avatar bot (gambar sebenar, bukan huruf):** vic, Masta dan Ayam kini
+  dipaparkan dengan potret AI (latar hijau felt). Imej dibenamkan sebagai
+  Base64 dalam `ui/Avatars.kt` kerana snapshot push tidak boleh push fail
+  binari — imej asal 256×256 disimpan di `~/workspace/pk2-avatars/`
+  (avatar-vic.jpg, avatar-masta.jpg, avatar-ayam.jpg); untuk ganti dengan
+  drawable sebenar, letak PNG dalam `res/drawable` dan guna
+  `painterResource()` dalam `BotAvatar`.
+- **Dialog profil opponent:** klik avatar/nama bot di meja untuk melihat
+  profilnya — gambar, nama, personaliti, **Biggest Pot Won** (pot terbesar
+  dimenangi sesi ini) dan **Highest Chips Held** (chip tertinggi pernah
+  dipegang sesi ini). Statistik bot dikira peringkat sesi sahaja (reset bila
+  aplikasi dibuka semula); statistik pemain utama kekal disimpan persistent
+  seperti sedia ada (Statistik).
 - **Skrin:** Menu Utama, Meja, Cara Main (peraturan + ranking tangan),
   Statistik (tangan dimain/dimenang, pot terbesar, tangan terbaik, cip bersih),
-  Tetapan (bahasa BM/EN serta-merta, kelajuan permainan).
+  Tetapan (bahasa **English lalai** — BM boleh dipilih semula, kelajuan permainan).
 - **Simpanan tempatan (DataStore):** baki chip, statistik, tetapan — kekal
   selepas aplikasi ditutup; tiada data keluar dari telefon.
 
@@ -58,7 +74,25 @@ Harness ujian: `scripts/EngineTest.kt`.
 2. Buka folder `pk2/` dalam **Android Studio Rabbit 2** (JDK 21, SDK API 36).
 3. Tunggu Gradle sync selesai, kemudian **Run** ke telefon.
 4. Uji: Main → buat raise/call/fold → showdown → Tangan Seterusnya →
-   tukar bahasa → tukar kelajuan → semak Statistik.
+   klik avatar vic / Masta / Ayam (dialog profil tunjuk 2 statistik) →
+   tukar bahasa ke BM dan kembali ke EN → tukar kelajuan → semak Statistik.
+   Semak juga: header tidak bertindih status bar, butang Lipat/Panggil/Naikkan
+   tidak dipotong navigation bar.
+
+Nota bahasa: English kini bahasa lalai untuk pemasangan baharu. Jika telefon
+anda sudah pernah menyimpan pilihan BM sebelum ini, bahasa itu dikekalkan
+sehingga anda tukar sendiri dalam Tetapan (pilihan yang disimpan mengatasi
+lalai baharu).
+
+## Sejarah perubahan
+
+- **v1.0.1 (UI fix, 10 Nov 2026):** Baiki susun atur meja (status/nav bar
+  insets — header tidak lagi bertindih status bar, butang aksi tidak lagi
+  dipotong navigation bar; padding tempat duduk bot ditambah); bahasa lalai
+  ditukar ke English (BM kekal sebagai pilihan); avatar bot baharu (gambar
+  AI, Base64 dalam kod); dialog profil opponent dengan Biggest Pot Won &
+  Highest Chips Held (statistik sesi).
+- **v1.0.0 (10 Nov 2026):** Versi pertama — Texas Hold'em offline lawan bot.
 
 Tiada config untuk diisi, tiada backend, tiada kunci — clone dan Run sahaja.
 
@@ -88,8 +122,9 @@ app/src/main/java/com/pokerku/app/
     HandEvaluator.kt         — penilai tangan 5–7 kad
     PokerGame.kt             — mesin keadaan permainan + side pot + showdown
     BotAi.kt                 — AI bot (Chen pre-flop, draw post-flop)
-  i18n/Strings.kt            — teks BM + English
+  i18n/Strings.kt            — teks BM + English (English lalai)
   ui/
+    Avatars.kt               — avatar bot (Base64 JPEG 256×256)
     PokerViewModel.kt        — orkestra game + giliran bot + simpanan
     theme/Theme.kt           — palet felt hijau + emas
     components/PokerComponents.kt — kad, tempat duduk, lencana cip

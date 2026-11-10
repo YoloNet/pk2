@@ -1,7 +1,9 @@
 package com.pokerku.app.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -27,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pokerku.app.engine.Card
 import com.pokerku.app.engine.PokerGame
+import com.pokerku.app.ui.rememberAvatar
 import com.pokerku.app.ui.theme.Emas
 import com.pokerku.app.ui.theme.EmasTerang
 import com.pokerku.app.ui.theme.Felt
@@ -188,17 +192,60 @@ fun ChipBadge(amount: Int, modifier: Modifier = Modifier) {
     }
 }
 
-/** Tempat duduk seorang pemain di meja. */
+/** Avatar bulat seorang bot — imej Base64 jika ada, bulatan huruf sebagai sandaran. */
+@Composable
+fun BotAvatar(
+    name: String,
+    size: Dp,
+    isTurn: Boolean = false,
+    modifier: Modifier = Modifier
+) {
+    val bitmap = rememberAvatar(name)
+    val borderColor = if (isTurn) EmasTerang else Color(0xFF1E6B4A)
+    val borderWidth = if (isTurn) 2.5.dp else 1.dp
+    if (bitmap != null) {
+        Image(
+            bitmap = bitmap,
+            contentDescription = name,
+            contentScale = ContentScale.Crop,
+            modifier = modifier
+                .size(size)
+                .clip(CircleShape)
+                .border(borderWidth, borderColor, CircleShape)
+        )
+    } else {
+        Box(
+            modifier = modifier
+                .size(size)
+                .clip(CircleShape)
+                .background(FeltTerang)
+                .border(borderWidth, borderColor, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = name.firstOrNull()?.uppercase() ?: "?",
+                color = Krim,
+                fontSize = (size.value * 0.42f).sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+/** Tempat duduk seorang pemain di meja. Klik (jika [onClick] diberi) buka dialog profil. */
 @Composable
 fun PlayerSeat(
     p: PokerGame.PlayerSnapshot,
     styleLabel: String?,
     t: (String) -> String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
 ) {
     val foldedAlpha = if (p.folded) 0.45f else 1f
     Column(
-        modifier = modifier.alpha(foldedAlpha),
+        modifier = modifier
+            .alpha(foldedAlpha)
+            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(contentAlignment = Alignment.TopEnd) {
@@ -211,25 +258,11 @@ fun PlayerSeat(
                     spacing = 3.dp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Box(
-                    modifier = Modifier
-                        .size(38.dp)
-                        .clip(CircleShape)
-                        .background(if (p.isBot) FeltTerang else Emas)
-                        .border(
-                            width = if (p.isTurn) 2.5.dp else 1.dp,
-                            color = if (p.isTurn) EmasTerang else Color(0xFF1E6B4A),
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = p.name.firstOrNull()?.uppercase() ?: "?",
-                        color = if (p.isBot) Krim else Color.White,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                BotAvatar(
+                    name = p.name,
+                    size = 44.dp,
+                    isTurn = p.isTurn
+                )
                 Text(
                     text = p.name,
                     color = Krim,
