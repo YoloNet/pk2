@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Latar ikon PokerKu — hijau felt gelap penuh. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#072A20"
+        android:pathData="M0,0 h108 v108 h-108 z" />
+    <path
+        android:fillColor="#0B3D2E"
+        android:pathData="M54,6 a48,48 0 1,1 -0.1,0 a48,48 0 1,1 0.1,0 z" />
+</vector>

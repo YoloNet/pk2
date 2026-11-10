@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PokerKu — palet jenama (selari KebunKu: hijau tua + aksen emas).
+  Meja felt hijau gelap, krim, emas. Tiada gradient ungu/biru,
+  tiada glassmorphism.
+-->
+<resources>
+    <color name="hijau">#1E4D2B</color>
+    <color name="hijau_gelap">#163A22</color>
+    <color name="hijau_muda">#2E6B3E</color>
+    <color name="hijau_pudar">#E4EEE6</color>
+    <color name="felt">#0B3D2E</color>
+    <color name="felt_gelap">#072A20</color>
+    <color name="felt_terang">#14663F</color>
+    <color name="krim">#F7F4EC</color>
+    <color name="krim_gelap">#EAE6D8</color>
+    <color name="emas">#C08A1A</color>
+    <color name="emas_terang">#E7C46A</color>
+    <color name="putih">#FFFFFF</color>
+    <color name="teks">#1C1C1A</color>
+    <color name="teks_pudar">#6B6B64</color>
+    <color name="merah">#B3261E</color>
+    <color name="merah_pudar">#FBEAEA</color>
+</resources>

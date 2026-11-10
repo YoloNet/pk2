@@ -1,0 +1,20 @@
+# PokerKu native — .gitignore
+# (Tiada binari, tiada kunci, tiada fail peranti / keystore dalam repo.)
+
+# Gradle / build
+.gradle/
+build/
+app/build/
+local.properties
+*.iml
+
+# Keystore & kata laluan — JANGAN sesekali commit.
+*.jks
+*.keystore
+*.p12
+
+# Fail sistem
+.DS_Store
+Thumbs.db
+.idea/
+*.hprof

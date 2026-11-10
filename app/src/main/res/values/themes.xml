@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PokerKu — tema aplikasi. Material 3 dengan warna jenama.
+  Aplikasi dikunci kepada tema cerah — tiada mod gelap.
+-->
+<resources>
+    <style name="Theme.PokerKu" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/felt_gelap</item>
+        <item name="android:statusBarColor">@color/felt_gelap</item>
+        <item name="android:navigationBarColor">@color/felt_gelap</item>
+        <item name="android:forceDarkAllowed">false</item>
+    </style>
+</resources>
